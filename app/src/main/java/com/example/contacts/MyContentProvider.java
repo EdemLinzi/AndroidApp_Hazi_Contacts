@@ -26,7 +26,7 @@ public class MyContentProvider extends ContentProvider {
     public static final String ADDRESS = "address";
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
-    public static final String Image = "image";
+    public static final String IMAGE = "image";
 
     private static HashMap<String, String> CONTACTS_PROJECTION_MAP;
     static final int CONTACTS = 1;

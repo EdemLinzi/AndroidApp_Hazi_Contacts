@@ -47,12 +47,16 @@ public class AddContactActivity extends AppCompatActivity {
         Log.i("AddContactActivity","Save Contact");
         ContentValues contentValues = new ContentValues();
 
+
+        //TODO saját adatbázishoz kell
+        /*
         contentValues.put(MyContentProvider.NAME,name.getText().toString());
         contentValues.put(MyContentProvider.ADDRESS,address.getText().toString());
         contentValues.put(MyContentProvider.PHONE,phone.getText().toString());
         contentValues.put(MyContentProvider.EMAIL,email.getText().toString());
 
        contentResolver.insert(MyContentProvider.CONTENT_URI,contentValues);
+       */
        setResult(RESULT_OK);
 
        finish();
