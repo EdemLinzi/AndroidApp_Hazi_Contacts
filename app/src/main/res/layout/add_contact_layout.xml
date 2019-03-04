@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <EditText
+        android:id="@+id/et_contact_nickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NickName:" />
+
+    <EditText
+        android:id="@+id/et_contact_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Name:" />
+
+    <EditText
+        android:id="@+id/et_contact_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address:" />
+
+    <EditText
+        android:id="@+id/et_contact_phone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Phone:" />
+
+    <EditText
+        android:id="@+id/et_contact_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Email:" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:textAlignment="center"
+        android:onClick="saveValues"/>
+
+</LinearLayout>
