@@ -12,12 +12,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.example.contacts.database.MyDataBase;
-import com.example.contacts.database.MyDataBaseHelper;
 
-import java.net.URI;
 import java.util.HashMap;
 
 public class MyContentProvider extends ContentProvider {
@@ -30,6 +26,7 @@ public class MyContentProvider extends ContentProvider {
     public static final String ADDRESS = "address";
     public static final String PHONE = "phone";
     public static final String EMAIL = "email";
+    public static final String Image = "image";
 
     private static HashMap<String, String> CONTACTS_PROJECTION_MAP;
     static final int CONTACTS = 1;
@@ -72,6 +69,9 @@ public class MyContentProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " +  CONTACTS_TABLE_NAME);
             onCreate(db);
         }
+
+
+
     }
 
 
@@ -134,15 +134,16 @@ public class MyContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri,String selection, String[] selectionArgs) {
-        Log.i("MyContentProvider","delete");
+        Log.i("MyContentProvider","delete "+selection);
 
+        db.delete(CONTACTS_TABLE_NAME,selection,selectionArgs);
         return 0;
     }
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
         Log.i("MyContentProvider","update");
-
+        db.update(CONTACTS_TABLE_NAME,values,selection,selectionArgs);
         return 0;
     }
 }

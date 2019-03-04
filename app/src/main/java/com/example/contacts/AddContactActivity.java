@@ -53,6 +53,8 @@ public class AddContactActivity extends AppCompatActivity {
         contentValues.put(MyContentProvider.EMAIL,email.getText().toString());
 
        contentResolver.insert(MyContentProvider.CONTENT_URI,contentValues);
+       setResult(RESULT_OK);
+
        finish();
     }
 

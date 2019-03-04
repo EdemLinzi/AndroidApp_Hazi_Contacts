@@ -1,6 +1,5 @@
 package com.example.contacts;
 
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
@@ -13,10 +12,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.contacts.database.MyDataBase;
 
 import java.util.ArrayList;
 
@@ -25,20 +22,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     ArrayList<Contacts_Array> contacts;
     ContactAdapter contactAdapter;
     ListView listView;
-    MyContentProvider myContentProvider;
 
     public class Contacts_Array{
         public String contacts_Array_Name = "";
         public String contacts_Array_Phone = "";
         public String contacts_Array_Address = "";
         public String contacts_Array_Email = "";
+        public String contacts_Array_Image = "";
     }
 
     private String[] columnProjection = new String[]{
-            MyDataBase.Entry.NAME,
-            MyDataBase.Entry.ADDRESS,
-            MyDataBase.Entry.EMAIL,
-            MyDataBase.Entry.PHONE
+            MyContentProvider.NAME,
+            MyContentProvider.ADDRESS,
+            MyContentProvider.EMAIL,
+            MyContentProvider.PHONE,
+
     };
 
     @Override
@@ -56,38 +54,26 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         contactAdapter = new ContactAdapter(this,contacts);
         listView.setAdapter(contactAdapter);
 
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.i("MainActivity","An item is clicked");
-                Cursor cursor = getContentResolver().query(MyContentProvider.CONTENT_URI,columnProjection,null,null,null);
-                cursor.moveToPosition(position);
-
-                String name = cursor.getString(cursor.getColumnIndex("name"));
-                Log.i("MainActivity",name);
-                String phone = cursor.getString(cursor.getColumnIndex("phone"));
-                Log.i("MainActivity",phone);
-                String address = cursor.getString(cursor.getColumnIndex("address"));
-                Log.i("MainActivity",address);
-                String email = cursor.getString(cursor.getColumnIndex("email"));
-                Log.i("MainActivity",email);
-
 
                 Intent intent = new Intent(view.getContext(),ContactData2.class);
-                intent.putExtra("ContactName",name);
-                intent.putExtra("ContactAddress",address);
-                intent.putExtra("ContactPhone",phone);
-                intent.putExtra("ContactEmail",email);
+                intent.putExtra("Position",position);
+                intent.putExtra("ID",id);
+                Log.i("MainActivity","This is the id "+id);
 
-                startActivity(intent);
-                cursor.close();
+                startActivityForResult(intent,1);
+
             }
         });
 
     }
     public void refresh(View v){
         Log.i("MainActivity","refresh");
-        getSupportLoaderManager().initLoader(1,null,this);
+        getSupportLoaderManager().restartLoader(1,new Bundle(),this);
     }
 
     public void startAddContact(View v){
@@ -103,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         if(i==1){
             Log.i("MainActivity","new CursorLoader");
+
+            //TODO saját adatbázishoz
             return new CursorLoader(this,MyContentProvider.CONTENT_URI,columnProjection,null,null,null);
         }
         return null;
@@ -116,6 +104,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         contacts.clear();
         if(cursor!=null && cursor.getCount()>0){
             while (cursor.moveToNext()){
+
+                //TODO saját adatbázishoz
                 Contacts_Array contacts_array = new Contacts_Array();
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 String phone = cursor.getString(cursor.getColumnIndex("phone"));
@@ -131,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         }
         cursor.close();
+        contactAdapter.notifyDataSetChanged();
 
 
 
@@ -141,5 +132,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.i("MainActivity","onActivityResult");
 
+        if(requestCode == 1){
+            if(resultCode == RESULT_OK){
+
+                contactAdapter.notifyDataSetChanged();
+                getSupportLoaderManager().restartLoader(1,new Bundle(),this);
+
+            }
+        }
+
+    }
 }

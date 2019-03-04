@@ -3,28 +3,28 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <EditText
         android:id="@+id/data_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Name:"
         android:textSize="30sp" />
 
-    <TextView
+    <EditText
         android:id="@+id/data_address"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Address:"
         android:textSize="24sp" />
 
-    <TextView
+    <EditText
         android:id="@+id/data_phone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Phone:"
         android:textSize="24sp" />
 
-    <TextView
+    <EditText
         android:id="@+id/data_email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -37,4 +37,18 @@
         android:layout_height="wrap_content"
         android:text="Back"
         android:onClick="back"/>
+
+    <Button
+        android:id="@+id/btn_contact_data_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save"
+        android:onClick="updateContact"/>
+
+    <Button
+        android:id="@+id/btn_contact_data_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Delete"
+        android:onClick="deleteContact"/>
 </LinearLayout>
