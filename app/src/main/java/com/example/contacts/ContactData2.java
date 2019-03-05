@@ -1,8 +1,10 @@
 package com.example.contacts;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
@@ -13,7 +15,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.net.URI;
 
 public class ContactData2 extends AppCompatActivity {
 
@@ -40,7 +45,6 @@ public class ContactData2 extends AppCompatActivity {
         email = findViewById(R.id.data_email);
         btn = findViewById(R.id.button);
         btn_save = findViewById(R.id.btn_contact_data_save);
-        btn_delete = findViewById(R.id.btn_contact_data_delete);
 
         Intent intent =  getIntent();
         id = Integer.parseInt(intent.getStringExtra("ID"));
@@ -51,6 +55,45 @@ public class ContactData2 extends AppCompatActivity {
         Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null, "CONTACT_ID = "+id,null,null);
         Cursor cursorAddress = getContentResolver().query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
         Cursor cursorEmail = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
+
+
+        while(cursorContact.moveToNext()) {
+            name.setText(cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+            String imageStr = cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
+            ImageView image = findViewById(R.id.imageView);
+            if(imageStr!=null) {
+                image.setImageURI(Uri.parse(imageStr));
+            }
+        }
+        StringBuilder phoneStr = new StringBuilder() ;
+        while(cursorPhone.moveToNext()){
+            phoneStr.append(cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))+"\n");
+        }
+        phone.setText(phoneStr.toString());
+        StringBuilder emailStr = new StringBuilder() ;
+        while(cursorEmail.moveToNext()) {
+            if (emailStr.toString() != null) {
+                emailStr.append(cursorEmail.getString(cursorEmail.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)) + "\n");
+            } else {
+                emailStr.append("Nincs email megadva");
+            }
+        }
+        email.setText(emailStr.toString());
+        while(cursorAddress.moveToNext()) {
+            String fullAddress = cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY))
+                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET))
+                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE));
+            if(fullAddress==null){
+                fullAddress = "Nincs megadva cím";
+            }
+            address.setText(fullAddress);
+        }
+         cursorContact.close();
+         cursorPhone.close();
+         cursorAddress.close();
+         cursorEmail.close();
+
+        setResult(RESULT_OK);
 
         //TODO saját adatbázhoz kell
         //cursor = getContentResolver().query(MyContentProvider.CONTENT_URI,null,null,null,null);
@@ -71,30 +114,7 @@ public class ContactData2 extends AppCompatActivity {
         email.setText(cursor.getString(cursor.getColumnIndex("email")));*/
 
         //id = cursorContact.getInt(cursorContact.getColumnIndex(ContactsContract.Contacts._ID));
-        while(cursorContact.moveToNext()) {
-            name.setText(cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-        }
-        while(cursorPhone.moveToNext()){
-            phone.setText(cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
-        }
-        String emailStr = "Faszom nem jó :(";
-        while(cursorEmail.moveToNext()) {
-            emailStr = cursorEmail.getString(cursorEmail.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-        }
-        email.setText(emailStr);
-        while(cursorAddress.moveToNext()) {
-            String fullAddress = cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY))
-                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET))
-                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE));
-            String addressTemp = fullAddress;
-            address.setText(fullAddress);
-        }
-         cursorContact.close();
-         cursorPhone.close();
-         cursorAddress.close();
-         cursorEmail.close();
 
-        setResult(RESULT_OK);
     }
 
     @Override
@@ -116,6 +136,16 @@ public class ContactData2 extends AppCompatActivity {
     }
 
     public void updateContact(View v){
+
+
+        //TODO lazább megoldás mivel ismerjük az id-t
+        Intent editIntent = new Intent(Intent.ACTION_EDIT);
+        editIntent.setData(ContentUris.withAppendedId(ContactsContract.Contacts.CONTENT_URI,id));
+        editIntent.putExtra("finishActivityOnSaveCompleted",true);
+        startActivity(editIntent);
+
+        //TODO saját adatbázishoz kell
+        /*
         ContentValues contentValues = new ContentValues();
 
         contentValues.put(MyContentProvider.NAME,name.getText().toString());
@@ -123,11 +153,11 @@ public class ContactData2 extends AppCompatActivity {
         contentValues.put(MyContentProvider.PHONE,phone.getText().toString());
         contentValues.put(MyContentProvider.EMAIL,email.getText().toString());
 
+        getContentResolver().update(MyContentProvider.CONTENT_URI,contentValues,MyContentProvider._ID+" = "+id,null);*/
 
-        getContentResolver().update(MyContentProvider.CONTENT_URI,contentValues,MyContentProvider._ID+" = "+id,null);
         setResult(RESULT_OK);
 
-        finish();
+       // finish();
     }
 
 }

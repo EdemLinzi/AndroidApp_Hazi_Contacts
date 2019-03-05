@@ -2,9 +2,11 @@ package com.example.contacts;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +18,6 @@ public class AddContactActivity extends AppCompatActivity {
 
     ContentResolver contentResolver;
 
-    EditText nickName;
     EditText name;
     EditText address;
     EditText phone;
@@ -30,7 +31,6 @@ public class AddContactActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.add_contact_layout);
 
-        nickName = findViewById(R.id.et_contact_nickname);
         name = findViewById(R.id.et_contact_name);
         address = findViewById(R.id.et_contact_address);
         phone = findViewById(R.id.et_contact_phone);
@@ -44,9 +44,28 @@ public class AddContactActivity extends AppCompatActivity {
 
 
     public void saveValues(View v){
+
+        //TODO már nincs rá szükség
         Log.i("AddContactActivity","Save Contact");
         ContentValues contentValues = new ContentValues();
 
+        /*contentValues.put(ContactsContract.Contacts.DISPLAY_NAME,name.getText().toString());
+        //TODO szétbontani az addresst
+        contentValues.put(ContactsContract.CommonDataKinds.StructuredPostal.CITY,address.getText().toString());
+        contentValues.put(ContactsContract.CommonDataKinds.Phone.NUMBER,phone.getText().toString());
+        contentValues.put(ContactsContract.CommonDataKinds.Email.ADDRESS,email.getText().toString());*/
+
+        //contentResolver.insert(ContactsContract.Contacts.CONTENT_URI,contentValues);
+
+        Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION);
+        intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+
+        /*intent.putExtra(ContactsContract.Intents.Insert.NAME,name.getText());
+        intent.putExtra(ContactsContract.Intents.Insert.PHONE,phone.getText());
+        intent.putExtra(ContactsContract.Intents.Insert.EMAIL,email.getText());
+        intent.putExtra(ContactsContract.Intents.Insert.POSTAL,address.getText());*/
+
+        startActivity(intent);
 
         //TODO saját adatbázishoz kell
         /*

@@ -16,6 +16,8 @@ import android.util.Log;
 
 import java.util.HashMap;
 
+//TODO saját adatbázishoz kell
+
 public class MyContentProvider extends ContentProvider {
     public static final String PROVIDER_NAME = "com.example.contacts.MyContentProvider";
     public static final String URL = "content://"+PROVIDER_NAME+"/contacts";

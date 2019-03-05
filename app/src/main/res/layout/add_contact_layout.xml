@@ -4,11 +4,6 @@
     android:layout_height="match_parent"
     >
 
-    <EditText
-        android:id="@+id/et_contact_nickname"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="NickName:" />
 
     <EditText
         android:id="@+id/et_contact_name"
@@ -38,7 +33,7 @@
         android:id="@+id/btn_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save"
+        android:text="Edit"
         android:textAlignment="center"
         android:onClick="saveValues"/>
 

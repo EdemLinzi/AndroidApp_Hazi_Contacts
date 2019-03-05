@@ -1,5 +1,6 @@
 package com.example.contacts;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.provider.ContactsContract;
@@ -83,12 +84,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
     public void refresh(View v){
         Log.i("MainActivity","refresh");
-        getSupportLoaderManager().restartLoader(0,new Bundle(),this);
+        getSupportLoaderManager().restartLoader(1,new Bundle(),this);
     }
 
     public void startAddContact(View v){
         Log.i("MainActivity","startAddContact");
-        startActivity(new Intent(this,AddContactActivity.class));
+
+        //TODO egyszerűbb és jobb
+        Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION);
+        intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+        startActivityForResult(intent,1);
+
+        //TODO régi
+        //startActivity(new Intent(this,AddContactActivity.class));
     }
 
 
@@ -164,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
             }
         }
-        cursor.close();
+        //cursor.close();
         contactAdapter.notifyDataSetChanged();
 
     }
