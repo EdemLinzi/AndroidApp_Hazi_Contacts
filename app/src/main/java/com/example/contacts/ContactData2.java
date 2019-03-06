@@ -51,47 +51,51 @@ public class ContactData2 extends AppCompatActivity {
         Log.i("ContactData2",""+id);
 
 
-        Cursor cursorContact = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null, ContactsContract.Contacts._ID+" = "+id,null,null);
-        Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null, "CONTACT_ID = "+id,null,null);
-        Cursor cursorAddress = getContentResolver().query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
-        Cursor cursorEmail = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
+
+        new Thread(new Runnable() {
+            Cursor cursorContact = getContentResolver().query(ContactsContract.Contacts.CONTENT_URI,null, ContactsContract.Contacts._ID+" = "+id,null,null);
+            Cursor cursorPhone = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null, "CONTACT_ID = "+id,null,null);
+            Cursor cursorAddress = getContentResolver().query(ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
+            Cursor cursorEmail = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,"CONTACT_ID = "+id,null,null);
+
+            @Override
+            public void run() {
+                while(cursorContact.moveToNext()) {
+                    name.setText(cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
+                    String imageStr = cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
+                    ImageView image = findViewById(R.id.imageView);
+                    if(imageStr!=null) {
+                        image.setImageURI(Uri.parse(imageStr));
+                    }
+                }
+                StringBuilder phoneStr = new StringBuilder() ;
+                while(cursorPhone.moveToNext()){
+                    phoneStr.append(cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))+"\n");
+                }
+                phone.setText(phoneStr.toString());
+                StringBuilder emailStr = new StringBuilder() ;
+                while(cursorEmail.moveToNext()) {
+                    if (emailStr.toString() != null) {
+                        emailStr.append(cursorEmail.getString(cursorEmail.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)) + "\n");
+                    } else {
+                        emailStr.append("Nincs email megadva");
+                    }
+                }
+                email.setText(emailStr.toString());
+                while(cursorAddress.moveToNext()) {
+                    String fullAddress = cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY))
+                            + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET))
+                            + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE));
+                    if(fullAddress==null){
+                        fullAddress = "Nincs megadva cím";
+                    }
+                    address.setText(fullAddress);
+                }
+            }
+
+        }).start();
 
 
-        while(cursorContact.moveToNext()) {
-            name.setText(cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME)));
-            String imageStr = cursorContact.getString(cursorContact.getColumnIndex(ContactsContract.Contacts.PHOTO_URI));
-            ImageView image = findViewById(R.id.imageView);
-            if(imageStr!=null) {
-                image.setImageURI(Uri.parse(imageStr));
-            }
-        }
-        StringBuilder phoneStr = new StringBuilder() ;
-        while(cursorPhone.moveToNext()){
-            phoneStr.append(cursorPhone.getString(cursorPhone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER))+"\n");
-        }
-        phone.setText(phoneStr.toString());
-        StringBuilder emailStr = new StringBuilder() ;
-        while(cursorEmail.moveToNext()) {
-            if (emailStr.toString() != null) {
-                emailStr.append(cursorEmail.getString(cursorEmail.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS)) + "\n");
-            } else {
-                emailStr.append("Nincs email megadva");
-            }
-        }
-        email.setText(emailStr.toString());
-        while(cursorAddress.moveToNext()) {
-            String fullAddress = cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.CITY))
-                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET))
-                    + cursorAddress.getString(cursorAddress.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE));
-            if(fullAddress==null){
-                fullAddress = "Nincs megadva cím";
-            }
-            address.setText(fullAddress);
-        }
-         cursorContact.close();
-         cursorPhone.close();
-         cursorAddress.close();
-         cursorEmail.close();
 
         setResult(RESULT_OK);
 
